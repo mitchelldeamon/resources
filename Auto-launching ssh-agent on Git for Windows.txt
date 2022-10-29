@@ -1,0 +1,72 @@
+## 1
+
+Locate your ".gitconfig" file
+
+My file was located in "C:\Users\mitch"
+
+## 2 
+
+Open text editor and past the following:
+
+env=~/.ssh/agent.env
+
+agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
+agent_start () {
+    (umask 077; ssh-agent >| "$env")
+    . "$env" >| /dev/null ; }
+
+agent_load_env
+
+# agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
+agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+
+if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+    agent_start
+    ssh-add
+elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+    ssh-add
+fi
+
+unset env
+
+## 3 
+
+Navigate to > File > Save As > ".bashrc" to same file path where ".gitconfig" is located
+
+## 4
+
+Open new finder window and Locate your ssh key path and copy by highlighting 
+and right clicking id_ed25519 File (not the pub) and "copy as path"
+My file path was "C:\Users\mitch\.ssh\id_ed25519"
+
+## 5 
+
+After copying path, navigate back to ".bashrc" file and paste file path after "ssh-add" (two locations)
+
+env=~/.ssh/agent.env
+
+agent_load_env () { test -f "$env" && . "$env" >| /dev/null ; }
+
+agent_start () {
+    (umask 077; ssh-agent >| "$env")
+    . "$env" >| /dev/null ; }
+
+agent_load_env
+
+# agent_run_state: 0=agent running w/ key; 1=agent w/o key; 2=agent not running
+agent_run_state=$(ssh-add -l >| /dev/null 2>&1; echo $?)
+
+if [ ! "$SSH_AUTH_SOCK" ] || [ $agent_run_state = 2 ]; then
+    agent_start
+    ssh-add "C:\Users\mitch\.ssh\id_ed25519"
+elif [ "$SSH_AUTH_SOCK" ] && [ $agent_run_state = 1 ]; then
+    ssh-add "C:\Users\mitch\.ssh\id_ed25519"
+fi
+
+unset env
+
+## 6 
+
+The next time you open Git Bash it will give you a prompt saying it has 
+added a ".bash_profile" to which you will be all set
